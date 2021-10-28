@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FromJSONToHTMLTable</title>
+    <style>
+        table,th{
+            border: groove;
+            border-collapse: collapse;
+        }
+        td{
+            border: 1px solid black;
+        }
+        td,th{
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+</div>
+<script>
+    function fromJSONToHTMLTable(inputJSON) {
+        let inputArray = JSON.parse(inputJSON);
+        let outputArray = ["<table>"];
+        outputArray.push(tableHeadings(inputArray[0]));
+        inputArray.forEach(record => outputArray.push(tableData(record)));
+        outputArray.push("</table>");
+
+        function tableHeadings(input) {
+            let headings = '\t<tr>';
+            Object.keys(input).forEach(key => {headings += `<th>${escapeHTML(key)}</th>`});
+            headings += '</tr>';
+
+            return headings
+        }
+
+        function tableData(input) {
+            let data = '\t<tr>';
+            Object.values(input).forEach(value => data += `<td>${escapeHTML(value)}</td>`);
+            data += '</tr>';
+
+            return data
+        }
+
+        function escapeHTML(value) {
+            return value.toString()
+                .trim()
+                .replace(/&/g, '&#38;')
+                .replace(/</g, '&#60;')
+                .replace(/>/g, '&#62;')
+                .replace(/"/g, '&#34;')
+                .replace(/'/g, '&#39;')
+        }
+
+        return outputArray.join('\n');
+    }
+    window.onload = function(){
+        let container = document.getElementById('wrapper');
+        container.innerHTML = fromJSONToHTMLTable(['[{"Name":"Stamat","Price":5.5},{"Name":"Rumen","Price":6}]']);
+    };
+</script>
+</body>
+</html>
